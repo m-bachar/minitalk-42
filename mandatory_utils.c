@@ -6,7 +6,7 @@
 /*   By: mbachar <mbachar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 11:47:21 by mbachar           #+#    #+#             */
-/*   Updated: 2023/02/01 09:07:18 by mbachar          ###   ########.fr       */
+/*   Updated: 2023/02/03 16:46:04 by mbachar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,4 @@ int	ft_atoi(char *str)
 		i++;
 	}
 	return (output * sign);
-}
-
-int	ft_isdigit(int c)
-{
-	if ((c >= '0' && c <= '9'))
-		return (1);
-	else
-		return (0);
 }
