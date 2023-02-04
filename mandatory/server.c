@@ -6,13 +6,13 @@
 /*   By: mbachar <mbachar@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 02:22:04 by mbachar           #+#    #+#             */
-/*   Updated: 2023/02/03 16:46:22 by mbachar          ###   ########.fr       */
+/*   Updated: 2023/02/04 18:07:38 by mbachar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-size_t	x_power_y(int x, int y)
+static size_t	x_power_y(int x, int y)
 {
 	int	z;
 
@@ -25,11 +25,11 @@ size_t	x_power_y(int x, int y)
 	return (z);
 }
 
-void	bit_to_char(int	*bits)
+static void	bit_to_char(int	*bits)
 {
-	int	ascii;
-	int	i;
-	int	j;
+	int			ascii;
+	int			i;
+	int			j;
 
 	i = 7;
 	j = 0;
@@ -40,26 +40,25 @@ void	bit_to_char(int	*bits)
 		i--;
 		j++;
 	}
-	write(1, &ascii, 1);
+	ft_printf("%c", ascii);
 }
 
-void	sigusr_received(int signum)
+static void	sigusr_received(int signum, siginfo_t *data, void *nada)
 {
 	static int	bits[8];
 	static int	i;
-	int			j;
+	static int	pid;
 
-	j = 0;
+	nada = NULL;
+	if (data->si_pid != pid)
+	{
+		pid = data->si_pid;
+		i = 0;
+	}
 	if (31 - signum == 0)
-	{
-		bits[i] = 0;
-		i++;
-	}
+		bits[i++] = 0;
 	else if (31 - signum == 1)
-	{
-		bits[i] = 1;
-		i++;
-	}
+		bits[i++] = 1;
 	if (i == 8)
 	{
 		bit_to_char(bits);
@@ -69,13 +68,16 @@ void	sigusr_received(int signum)
 
 int	main(void)
 {
-	int	pid;
+	struct sigaction	moe;
+	int					pid;
 
+	moe.sa_sigaction = sigusr_received;
+	moe.sa_flags = SA_SIGINFO;
 	pid = getpid();
 	ft_printf("*** PID = %d ***", pid);
 	ft_printf("\n");
-	signal(SIGUSR1, sigusr_received);
-	signal(SIGUSR2, sigusr_received);
+	sigaction(SIGUSR1, &moe, NULL);
+	sigaction(SIGUSR2, &moe, NULL);
 	while (1)
 		pause();
 }
